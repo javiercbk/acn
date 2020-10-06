@@ -8,5 +8,5 @@ func (a acnErr) Error() string {
 
 const (
 	// ErrNodeNotFound is returned whenever a node was not found
-	ErrNodeNotFound acnErr = "could not find matching ast node"
+	ErrNotFound acnErr = "could not find matching ast node"
 )

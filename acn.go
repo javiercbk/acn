@@ -26,6 +26,7 @@ var (
 	}
 )
 
+// ASTFuncDeclContext is a function declaration in the ast
 type ASTFuncDeclContext struct {
 	fset *token.FileSet
 	file *ast.File
@@ -47,6 +48,7 @@ type Navigator struct {
 	mainFunc *ASTFuncDeclContext
 }
 
+// NewNavigator creates a new Navigator
 func NewNavigator(logger *log.Logger, conf Config) Navigator {
 	return Navigator{
 		logger: logger,
@@ -112,7 +114,7 @@ func (n *Navigator) findMainFunc() error {
 			return nil
 		}
 	}
-	return ErrNodeNotFound
+	return ErrNotFound
 }
 
 func fileNameMatcherFactory(fileRegexp *regexp.Regexp) func(goFile string) bool {
@@ -159,7 +161,7 @@ func findFunction(file *ast.File, name string, options ...findFuncOption) (*ast.
 			}
 		}
 	}
-	return nil, ErrNodeNotFound
+	return nil, ErrNotFound
 }
 
 func astForFile(filePath string, fset *token.FileSet) (*ast.File, error) {
