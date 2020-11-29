@@ -1,8 +1,6 @@
 package acn
 
 import (
-	"io/ioutil"
-	"log"
 	"regexp"
 	"testing"
 )
@@ -68,25 +66,34 @@ func TestFileNameMatcher(t *testing.T) {
 }
 
 func TestFindMain(t *testing.T) {
-	logger := log.New(ioutil.Discard, "", log.Llongfile)
-	n := NewNavigator(logger, Config{
-		Folder: "testdata/mod-project",
-	})
-	err := n.findMainFunc()
-	if err != nil {
-		t.Fatalf("error finding main function %v", err)
-	}
-	if n.mainFunc == nil {
-		t.Fatal("main function was not found")
-	}
-	if n.mainFunc.decl.Name.Name != "main" {
-		t.Fatalf("expected function name to be main but was %s", n.mainFunc.decl.Name.Name)
-	}
-	if len(n.mainFunc.decl.Type.Params.List) != 0 {
-		t.Fatalf("expected function to not have parameters but had %d", len(n.mainFunc.decl.Type.Params.List))
-	}
-	if n.mainFunc.decl.Recv != nil {
-		t.Fatalf("expected function to not have receiver but it had %v, meaning it is a method", n.mainFunc.decl.Recv)
-	}
+	// logger := log.New(ioutil.Discard, "", log.Llongfile)
+	// project := NewGoProject(logger, Config{
+	// 	Folder: "testdata/mod-project",
+	// })
+	// err := n.project()
+	// if err != nil {
+	// 	t.Fatalf("error finding main function %v", err)
+	// }
+	// if n.mainFunc == nil {
+	// 	t.Fatal("main function was not found")
+	// }
+	// if n.mainFunc.decl.Name.Name != "main" {
+	// 	t.Fatalf("expected function name to be main but was %s", n.mainFunc.decl.Name.Name)
+	// }
+	// if len(n.mainFunc.decl.Type.Params.List) != 0 {
+	// 	t.Fatalf("expected function to not have parameters but had %d", len(n.mainFunc.decl.Type.Params.List))
+	// }
+	// if n.mainFunc.decl.Recv != nil {
+	// 	t.Fatalf("expected function to not have receiver but it had %v, meaning it is a method", n.mainFunc.decl.Recv)
+	// }
+}
 
+func TestFindFunction(t *testing.T) {
+	// f := ast.FuncDecl{}
+	// goProject := NewGoProject("./testdata/mod-project", []string{"modproj/http"})
+	// goProject.Analize()
+	// functionFound := goProject("./testdata/mod-project", []string{"modproj/http"}, "customHTTPErrorHandler", &f)
+	// if !functionFound {
+	// 	t.Fatal("expected function to be found")
+	// }
 }

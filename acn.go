@@ -9,6 +9,8 @@ import (
 	"log"
 	"os"
 	"regexp"
+
+	"golang.org/x/tools/go/packages"
 )
 
 var (
@@ -45,6 +47,7 @@ type Config struct {
 type Navigator struct {
 	logger   *log.Logger
 	conf     Config
+	pkgs     []*packages.Package
 	mainFunc *ASTFuncDeclContext
 }
 
@@ -79,6 +82,43 @@ func (n *Navigator) FindFunctionCallFromFunc(funcDecl *ast.FuncDecl) (*ast.CallE
 	return nil, nil
 }
 
+// GoProject
+type GoProject struct {
+	pkgs []*packages.Package
+}
+
+// AnalizeGoProject analizes a go project and extract all selected packages metadata
+func AnalizeGoProject(rootDir string, explorePackages []string) (GoProject, error) {
+	proj := GoProject{}
+	var fset = token.NewFileSet()
+	cfg := &packages.Config{Fset: fset, Mode: packages.LoadAllSyntax, Dir: rootDir}
+	pkgs, err := packages.Load(cfg, explorePackages...)
+	if err == nil {
+		proj.pkgs = pkgs
+	}
+	return proj, err
+}
+
+func (g *GoProject) FindFunction(funcName string, funcDeclFound *ast.FuncDecl) bool {
+	found := false
+	for _, pkg := range g.pkgs {
+		for _, fileAst := range pkg.Syntax {
+			ast.Inspect(fileAst, func(n ast.Node) bool {
+				if funcDecl, ok := n.(*ast.FuncDecl); ok {
+					if funcDecl.Name.Name == funcName {
+						funcDeclFound = funcDecl
+						found = true
+					}
+				}
+				return !found
+			})
+			if found {
+				return true
+			}
+		}
+	}
+	return false
+}
 func (n *Navigator) findMainFunc() error {
 	if n.mainFunc != nil {
 		return nil
